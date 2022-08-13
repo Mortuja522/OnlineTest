@@ -12,12 +12,19 @@ class Blog extends Model
         'title',
         'slug',
         'description',
+        'image',
         'user_id'
     ];
     public function user(){
 
         return $this->belongsTo(User::class);
     }
+
+
+    // public function catgory(){
+
+    //        return $this->belongsTo(User::class);
+    // }
 
     
 

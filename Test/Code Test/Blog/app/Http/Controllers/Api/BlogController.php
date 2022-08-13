@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Blog;
+use Symfony\Contracts\Service\Attribute\Required;
+
 
 
 class BlogController extends Controller
@@ -16,8 +18,9 @@ class BlogController extends Controller
         $validator = Validator::make($request->all(), [
             'title'=>'required|max:250',
             'slug'=>'required',
-            'description'=>'required'
-            //'user_id'=>'required'
+            'description'=>'required',
+            'image'=>'Required|image|mimes:jpg,bmp,png'
+            
             
         ]);
 
@@ -29,11 +32,15 @@ class BlogController extends Controller
             ],422);
         }  
 
+        $image_name=time().'.'.$request->image->extension();
+        $request->image->move(public_path('/uploads/blog_images'),$image_name);
+
         $blog=Blog::create([
 
             'title'=>$request->title,
             'slug'=>$request->slug,
             'description'=>$request->description,
+            'image'=> $image_name,
             'user_id'=>$request->user()->id
 
         ]);
@@ -142,6 +149,35 @@ class BlogController extends Controller
 
         }
 
+
+
+    }
+
+    public function list(Request $request){
+
+        $blog_query=Blog::with('user');
+        $blogs=$blog_query->get();
+
+        return response()->
+        json([
+            'message'=>'Blog & Auth user Successfully fetched',
+            'data'=>$blogs
+            
+        ],200);
+
+
+    }
+
+    public function imageshow($id)
+    {
+
+            $blog_images=Blog::select('image','user_id')->where('id',$id)->get();
+
+            return response()->
+            json([
+                'message'=>'Image Successfully fetched',
+                'data'=>$blog_images
+                ],200);
 
 
     }

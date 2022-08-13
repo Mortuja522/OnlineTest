@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('blog_id');
             $table->timestamps();
-            $table->timestamps();
+           
 
             $table->foreign('user_id')
             ->references('id')
